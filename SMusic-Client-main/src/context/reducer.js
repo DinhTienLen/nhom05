@@ -16,7 +16,7 @@ export const actionType = {
   };
   
   const reducer = (state, action) => {
-    console.log(action);
+    // console.log(action);
   
     switch (action.type) {
       case actionType.SET_USER:
@@ -42,10 +42,10 @@ export const actionType = {
           ...state,
           artists: action.artists,
         };
-        case actionType.SET_ALL_ARTISTS:
+      case actionType.SET_ALL_ARTISTS:
           return {
             ...state,
-            allSongs: action.allArtists,
+            allArtists: action.allArtists,
           };
       case actionType.SET_ARTIST_FILTER:
         return {

@@ -106,7 +106,7 @@ export const SongCard = ({ data, index }) => {
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState(null);
 
-  const [{ allSongs, song, isSongPlaying }, dispatch] = useStateValue();
+  const [{ allSongs, song, isSongPlaying },dispatch] = useStateValue();
 
   const addSongToContext = () => {
     if (!isSongPlaying) {
@@ -124,9 +124,7 @@ export const SongCard = ({ data, index }) => {
   };
 
   const deleteObject = (id) => {
-    console.log(id);
     deleteSongById(id).then((res) => {
-      // console.log(res.data);
       if (res.data.success) {
         setAlert("success");
         setAlertMsg(res.data.msg);

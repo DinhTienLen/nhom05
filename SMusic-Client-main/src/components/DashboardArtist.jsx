@@ -5,24 +5,25 @@ import { useStateValue } from "../context/StateProvide";
 import { Link } from "react-router-dom";
 import { IoLogoInstagram, IoLogoTwitter } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
-import { deleteArtistById,getAllArtist } from "../api";
+import { deleteArtistById, getAllArtist } from "../api";
 import { actionType } from "../context/reducer";
 import { NavLink } from "react-router-dom";
 import { IoAdd, IoPause, IoPlay, IoTrash } from "react-icons/io5";
 import { AiOutlineClear } from "react-icons/ai";
 
 const DashboardArtist = () => {
-  const [{ artists }, dispatch] = useStateValue();
+  const [{ allArtists }, dispatch] = useStateValue();
   const [songFilter, setSongFilter] = useState("");
   const [isFocus, setIsFocus] = useState(false);
   const [filteredSongs, setFilteredSongs] = useState(null);
 
-  // const [{ allSongs }, dispatch] = useStateValue();
-
   useEffect(() => {
-    if (!artists) {
+    if (!allArtists) {
       getAllArtist().then((data) => {
-        dispatch({ type: actionType.SET_ARTISTS, artists: data.data });
+        dispatch({
+          type: actionType.SET_ALL_ARTISTS,
+          allArtists: data.data,
+        });
       });
     }
   }, []);
@@ -63,8 +64,8 @@ const DashboardArtist = () => {
         )}
       </div>
       <div className="relative w-full gap-3  my-4 p-4 py-12 border border-gray-300 rounded-md flex flex-wrap justify-evenly">
-        {artists &&
-          artists.map((data, index) => (
+        {allArtists &&
+          allArtists.map((data, index) => (
             <>
               <ArtistCard key={index} data={data} index={index} />
             </>
@@ -78,17 +79,16 @@ export const ArtistCard = ({ data, index }) => {
   const [isDelete, setIsDelete] = useState(false);
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState(null);
-  const [ dispatch] = useStateValue();
+  const [{ allArtists }, dispatch] = useStateValue();
+ 
   const deleteObject = (id) => {
-    console.log(id);
     deleteArtistById(id).then((res) => {
-      // console.log(res.data);
       if (res.data.success) {
         setAlert("success");
         setAlertMsg(res.data.msg);
         getAllArtist().then((data) => {
           dispatch({
-            type: actionType.SET_ARTISTS,
+            type: actionType.SET_ALL_ARTISTS,
             allArtists: data.data,
           });
         });
@@ -150,7 +150,12 @@ export const ArtistCard = ({ data, index }) => {
           </p>
           <div className="flex items-center w-full justify-center gap-3">
             <div className="bg-red-300 px-3 rounded-md">
-              <p className="text-headingColor text-sm"   onClick={() => deleteObject(data._id)}>Có</p>
+              <p
+                className="text-headingColor text-sm"
+                onClick={() => deleteObject(data._id)}
+              >
+                Có
+              </p>
             </div>
             <div
               className="bg-green-300 px-3 rounded-md"

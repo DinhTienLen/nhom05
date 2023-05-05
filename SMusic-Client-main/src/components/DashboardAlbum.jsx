@@ -4,14 +4,10 @@ import { useStateValue } from "../context/StateProvide";
 import { motion } from "framer-motion";
 import { MdDelete } from "react-icons/md";
 import { actionType } from "../context/reducer";
-//import { getAllAlbums } from "../api";
-import { deleteSongById, getAllAlbums } from "../api";
-
+import { deleteAlbumById, getAllAlbums } from "../api";
 import { NavLink } from "react-router-dom";
 import { IoAdd, IoPause, IoPlay, IoTrash } from "react-icons/io5";
 import { AiOutlineClear } from "react-icons/ai";
-import { deleteObject } from "firebase/storage";
-
 
 const DashboardAlbum = () => {
   const [isFocus, setIsFocus] = useState(false);
@@ -22,7 +18,9 @@ const DashboardAlbum = () => {
   useEffect(() => {
     if (!allAlbums) {
       getAllAlbums().then((data) => {
-        dispatch({ type: actionType.SET_ALL_ALBUMNS, allAlbums: data.data });
+        dispatch({ 
+          type: actionType.SET_ALL_ALBUMNS, 
+          allAlbums: data.data });
       });
     }
   }, []);
@@ -74,6 +72,33 @@ const DashboardAlbum = () => {
 
 export const AlbumCard = ({ data, index }) => {
   const [isDelete, setIsDelete] = useState(false);
+  const [alert, setAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState(null);
+  const [{ allAlbums},dispatch] = useStateValue();
+
+  const deleteObject = (id) => {
+    deleteAlbumById(id).then((res) => {
+      if (res.data.success) {
+        setAlert("success");
+        setAlertMsg(res.data.msg);
+        getAllAlbums().then((data) => {
+          dispatch({
+            type: actionType.SET_ALL_ALBUMNS,
+            allAlbums: data.data,
+          });
+        });
+        setTimeout(() => {
+          setAlert(false);
+        }, 4000);
+      } else {
+        setAlert("error");
+        setAlertMsg(res.data.msg);
+        setTimeout(() => {
+          setAlert(false);
+        }, 4000);
+      }
+    });
+  };
   return (
     <motion.div
       initial={{ opacity: 0, translateX: -50 }}
@@ -110,7 +135,7 @@ export const AlbumCard = ({ data, index }) => {
 
           <div className="flex items-center w-full justify-center gap-3">
             <div className="bg-red-300 px-3 rounded-md"
-              onClick={() => deleteObject(data.SET_ALL_ALBUMNS)}
+              onClick={() => deleteObject(data._id)}
             >
               <p className="text-headingColor text-sm">Có</p>
             </div>

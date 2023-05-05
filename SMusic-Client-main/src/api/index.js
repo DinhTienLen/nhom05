@@ -96,6 +96,14 @@ export const saveNewAlbum = async (data) => {
     return null;
   }
 };
+export const deleteAlbumById = async (id) => {
+  try {
+    const res = axios.delete(`${baseURL}api/albums/delete/${id}`);
+    return res;
+  } catch (error) {
+    return null;
+  }
+};
 
 export const saveNewSong = async (data) => {
   try {
